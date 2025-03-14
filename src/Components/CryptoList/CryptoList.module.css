@@ -1,16 +1,65 @@
-.cryptoItem{
+.container {
+    margin: 0 6rem;
+    padding: 1rem;
+    border-radius: 8px;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+tr:hover {
+    background-color: #f5f5f5;
+}
+
+.cryptoImage{
+    width: 30px;
+    height: 30px;
+}
+.cryptoNameBar{
     display: flex;
     flex-direction: row;
     gap: 1rem;
-}
-.cryptoContainer {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 20px;
-    padding: 10px;
+    align-items: center;
 }
 
-.cryptoImg{
-    width: 30px;
-    height: 30px;
+.smallCryptoNameBar{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+}
+
+.cryptoName{
+    font-weight: bold;
+    font-size: large;
+}
+.cryptoSymbol{
+    font-size: 13px;
+    color: gray;
+}
+
+.defaultText{
+    font-size: 16px;
+}
+
+.negative{
+    color: #a60000;
+    font-weight: bolder;
+}
+.positive{
+    color: rgba(40, 101, 0, 0.81);
+    font-weight: bolder;
 }
