@@ -26,7 +26,7 @@ function MyPaginator(props: PaginatorProps) {
             <button onClick={handlePreviousPageClick} disabled={disabled.left}>{`<`}</button>
             {nav && (
                 <span>
-                    Страница {nav.current} из {nav.total}
+                    Страница {nav.current}
                 </span>
             )}
             <button onClick={handleNextPageClick} disabled={disabled.right}>{`>`}</button>

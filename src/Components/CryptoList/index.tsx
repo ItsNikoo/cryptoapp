@@ -1,65 +1,78 @@
-import {useQuery} from "@tanstack/react-query";
-import axios from "axios";
 import styles from './CryptoList.module.css'
 import MyPaginator from "../MyPaginator";
-import {useState} from "react";
+import CryptoTable from "./Params/CryptoTable.tsx";
+import CurrencyChoice from "./Params/CurrencyChoice.tsx";
+import SetOrderCurrency from "./Params/SetOrderCurrency.tsx";
 
+import {useState, useEffect} from "react";
+import useCryptoData from "../Hooks/useCryptoData.ts";
+import useFilterData from "../Hooks/useFilterData.ts";
 
 export default function CryptoList() {
-    const [page, setPage] = useState(1);
-    const totalPages = useState(100);
-    const [perPage, setPerPage] = useState(10);
-    const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=${perPage}&page=${page}`
+    const [page, setPage] = useState(() => {
+        const savedPage = localStorage.getItem("page");
+        return savedPage ? parseInt(savedPage, 10) : 1;
+    });
+    const totalPages = 1000;
+    const [perPage, setPerPage] = useState(() => {
+        const perPage = localStorage.getItem("perPage");
+        return perPage ? parseInt(perPage, 10) : 10;
+    });
+    const [currency, setCurrency] = useState(() => {
+        const savedCurrency = localStorage.getItem("currency");
+        return savedCurrency || 'usd';
+    });
+    const [query, setQuery] = useState("")
+    const [sortOrder, setSortOrder] = useState<"none" | "asc" | "desc">("none");
 
-    function translateMarketCap(marketCap: number): string {
-        if (marketCap >= 1e12) {
-            // Триллионы
-            return `$${(marketCap / 1e12).toFixed(2)}T`;
-        } else if (marketCap >= 1e9) {
-            // Миллиарды
-            return `$${(marketCap / 1e9).toFixed(2)}B`;
-        } else if (marketCap >= 1e6) {
-            // Миллионы
-            return `$${(marketCap / 1e6).toFixed(2)}M`;
-        } else if (marketCap >= 1e3) {
-            // Тысячи
-            return `$${(marketCap / 1e3).toFixed(2)}K`;
-        } else {
-            // Меньше тысячи
-            return `$${marketCap.toLocaleString()}`;
-        }
-    }
+    useEffect(() => {
+        localStorage.setItem("currency", currency);
+        localStorage.setItem("page", page);
+    }, [currency, page]);
 
-    async function fetchData() {
-        const response = await axios.get(url)
-        return response.data
-    }
-
-    const {data, isError, isLoading, error} = useQuery({
-        queryKey: [`crypto`, page, perPage],
-        queryFn: fetchData,
-        refetchInterval: 1000 * 30,
-        //staleTime: 1000 * 60,  // Данные считаются актуальными в течение 5 минут
-        refetchOnWindowFocus: false, // Запрос не будет повторяться при фокусе окна
-
-    })
-    if (isLoading) return <p>Загрузка...</p>;
-    if (isError) return <p>Ошибка: {error.message}</p>;
+    const {data, isError, isLoading, error} = useCryptoData(page, perPage, currency);
+    const filteredData = useFilterData({data, state: sortOrder, query});
 
     const goToNextPage = () => {
-        setPage(page+1)
+        const newPage = page + 1;
+        setPage(newPage);
+        localStorage.setItem("page", newPage.toString()); // Сохраняем новую страницу
     }
     const goToPreviousPage = () => {
-        setPage(prevPage => Math.max(prevPage - 1, 1));
+        const newPage = Math.max(page - 1, 1);
+        setPage(newPage);
+        localStorage.setItem("page", newPage.toString()); // Сохраняем новую страницу
     }
 
     const handlePerPageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setPerPage(parseInt(event.target.value, 10))
+        const newPerPage = parseInt(event.target.value);
+        setPerPage(newPerPage);
+        localStorage.setItem("perPage", newPerPage.toString());
         setPage(1)
     }
 
+    const currencyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setCurrency(event.target.value)
+    }
+
+    if (isLoading) return <p>Загрузка...</p>;
+    if (isError) return <p>Ошибка: {error.message}</p>;
     return (
         <div className={styles.container}>
+            <div className={styles.HigherContainer}>
+                <div className={styles.InputContainer}>
+                    <input className={styles.Input} type="text" value={query} onChange={(e) => {
+                        setQuery(e.target.value)
+                    }}/>
+                </div>
+                <div className={styles.ParamsContainer}>
+                    <SetOrderCurrency state={sortOrder} setState={(e) => setSortOrder(e.target.value)}/>
+                    <CurrencyChoice currency={currency} currencyChange={currencyChange}/>
+                </div>
+            </div>
+
+            <CryptoTable data={filteredData} currency={currency}/>
+
             <div>
                 <label htmlFor="perPage">Элементов на странице</label>
                 <select id="perPage" value={perPage} onChange={handlePerPageChange}>
@@ -81,44 +94,6 @@ export default function CryptoList() {
                     }}
                 />
             </div>
-            <table className={styles.table}>
-                <thead>
-                <tr>
-                    <th>Rank</th>
-                    <th>Name</th>
-                    <th>Price</th>
-                    <th>Market Cap</th>
-                    <th>Market change</th>
-                    <th>Price change</th>
-                    <th>Low</th>
-                    <th>High</th>
-                </tr>
-                </thead>
-                <tbody>
-                {data && data.map((item, index) => (
-                    <tr key={index}>
-                        <td>{item.market_cap_rank} </td>
-                        <td className={styles.cryptoNameBar}>
-                            <img className={styles.cryptoImage} src={item.image} alt=""/>
-                            <div className={styles.smallCryptoNameBar}>
-                                <p className={styles.cryptoName}>{item.name}</p>
-                                <p className={styles.cryptoSymbol}>{item.symbol}</p>
-                            </div>
-                        </td>
-                        <td className={styles.defaultText}>${item.current_price}</td>
-                        <td>{translateMarketCap(item.market_cap)}</td>
-                        <td className={item.market_cap_change_percentage_24h < 0 ? styles.negative : styles.positive}>
-                            {item.market_cap_change_percentage_24h}%
-                        </td>
-                        <td className={item.price_change_percentage_24h < 0 ? styles.negative : styles.positive}>
-                            {item.price_change_percentage_24h}%
-                        </td>
-                        <td>${item.low_24h}</td>
-                        <td>${item.high_24h}</td>
-                    </tr>
-                ))}
-                </tbody>
-            </table>
         </div>
     );
 }
