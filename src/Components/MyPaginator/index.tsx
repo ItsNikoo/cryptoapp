@@ -1,4 +1,6 @@
 import React from 'react'
+import styles from "./MyPaginator.module.css"
+
 interface PaginatorProps {
     onNextPageClick: () => void,
     onPreviousPageClick: () => void,
@@ -22,14 +24,14 @@ function MyPaginator(props: PaginatorProps) {
     }
 
     return (
-        <div>
-            <button onClick={handlePreviousPageClick} disabled={disabled.left}>{`<`}</button>
+        <div className={styles.Container}>
+            <button className={styles.Button} onClick={handlePreviousPageClick} disabled={disabled.left}>{`<`}</button>
             {nav && (
-                <span>
+                <span className={styles.Title}>
                     Страница {nav.current}
                 </span>
             )}
-            <button onClick={handleNextPageClick} disabled={disabled.right}>{`>`}</button>
+            <button className={styles.Button} onClick={handleNextPageClick} disabled={disabled.right}>{`>`}</button>
         </div>
     )
 }

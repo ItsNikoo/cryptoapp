@@ -3,6 +3,7 @@ import MyPaginator from "../MyPaginator";
 import CryptoTable from "./Params/CryptoTable.tsx";
 import CurrencyChoice from "./Params/CurrencyChoice.tsx";
 import SetOrderCurrency from "./Params/SetOrderCurrency.tsx";
+import SetOrderMarketCap from "./Params/SetOrderMarketCap.tsx";
 
 import {useState, useEffect} from "react";
 import useCryptoData from "../Hooks/useCryptoData.ts";
@@ -24,6 +25,7 @@ export default function CryptoList() {
     });
     const [query, setQuery] = useState("")
     const [sortOrder, setSortOrder] = useState<"none" | "asc" | "desc">("none");
+    const [sortOrderCap, setSortOrderCap] = useState<"none" | "asc" | "desc">("none");
 
     useEffect(() => {
         localStorage.setItem("currency", currency);
@@ -31,7 +33,12 @@ export default function CryptoList() {
     }, [currency, page]);
 
     const {data, isError, isLoading, error} = useCryptoData(page, perPage, currency);
-    const filteredData = useFilterData({data, state: sortOrder, query});
+    const filteredData = useFilterData({
+        data,
+        state: sortOrder !== "none" ? sortOrder : sortOrderCap, // Приоритет у сортировки по цене
+        query,
+        sortBy: sortOrder !== "none" ? "price" : "market_cap", // Определяем критерий сортировки
+    });
 
     const goToNextPage = () => {
         const newPage = page + 1;
@@ -66,21 +73,21 @@ export default function CryptoList() {
                     }}/>
                 </div>
                 <div className={styles.ParamsContainer}>
-                    <SetOrderCurrency state={sortOrder} setState={(e) => setSortOrder(e.target.value)}/>
+                    <SetOrderMarketCap state={sortOrderCap} setState={(e) => {
+                        setSortOrderCap(e.target.value)
+                        setSortOrder('none')
+                    }} />
+                    <SetOrderCurrency state={sortOrder} setState={(e) => {
+                        setSortOrder(e.target.value)
+                        setSortOrderCap('none')
+                    }}/>
                     <CurrencyChoice currency={currency} currencyChange={currencyChange}/>
                 </div>
             </div>
 
             <CryptoTable data={filteredData} currency={currency}/>
 
-            <div>
-                <label htmlFor="perPage">Элементов на странице</label>
-                <select id="perPage" value={perPage} onChange={handlePerPageChange}>
-                    <option value="10">10</option>
-                    <option value="20">20</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                </select>
+            <div className={styles.PaginationContainer}>
                 <MyPaginator
                     onNextPageClick={goToNextPage}
                     onPreviousPageClick={goToPreviousPage}
@@ -93,6 +100,15 @@ export default function CryptoList() {
                         total: totalPages,
                     }}
                 />
+                <div className={styles.Select}>
+                    <label htmlFor="perPage">Элементов на странице</label>
+                    <select id="perPage" value={perPage} onChange={handlePerPageChange}>
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                </div>
             </div>
         </div>
     );

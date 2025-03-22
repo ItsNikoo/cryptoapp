@@ -5,11 +5,11 @@ interface Props {
     setState: () => void,
 }
 
-export default function SetOrderCurrency(props: Props): React.ReactElement {
+export default function setOrderMarketCap(props: Props): React.ReactElement {
 
     return (
         <div className={styles.Select} >
-            <label className={styles.CurrencyChoiceParagraph} >Цена:</label>
+            <label className={styles.CurrencyChoiceParagraph} >Капитализация:</label>
             <select value={props.state} onChange={props.setState}>
                 <option value='asc'>По возрастанию</option>
                 <option value="none">Без сортировки</option>

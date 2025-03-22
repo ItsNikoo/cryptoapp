@@ -65,11 +65,10 @@ tr:hover {
     color: 	#4CBB17;
     font-weight: bolder;
 }
-.CurrencyChoiceContainer {
+.Select {
     display: flex;
     align-items: center;
     gap: 1.5rem;
-    margin-bottom: 20px;
     justify-content: end;
 }
 
@@ -79,7 +78,7 @@ tr:hover {
     color: #333;
 }
 
-.CurrencyChoiceContainer select {
+.Select select {
     padding: 8px 12px;
     font-size: 14px;
     color: #333;
@@ -90,26 +89,12 @@ tr:hover {
     transition: all 0.3s ease;
 }
 
-.CurrencyChoiceContainer select:hover {
-    box-shadow: 0 2px 16px 0 rgba(0, 0, 0, 0.2), 0 2px 5px 0 rgba(0, 0, 0, 0.19);
-    background-color: #fff;
-}
-.CurrencyChoiceContainer select:focus {
-    outline: none; /* Убираем стандартный контур */
-    border-color: #007bff; /* Цвет границы при фокусе */
-    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25); /* Тень при фокусе */
+.Select select:hover {
+    background-color: #e1e1e1;
 }
 
-.CurrencyChoiceContainer select option {
-    padding: 8px 12px;
-    background-color: #fff;
-    color: #333;
+.Select option {
     font-weight: bold;
-}
-
-.CurrencyChoiceContainer select option:hover {
-    background-color: #007bff;
-    color: #fff;
 }
 
 .InputContainer {
@@ -125,10 +110,25 @@ tr:hover {
     display: flex;
     justify-content: end;
     gap: 3rem;
+    margin-bottom: 10px;
 }
 
 .HigherContainer{
     display: flex;
     flex-direction: column;
     gap: 10px;
+}
+
+.PaginationContainer{
+    display: flex;
+    margin: 0 auto;
+    justify-content: end;
+    align-items: center;
+}
+
+
+.PagesChoiceContainer {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 }

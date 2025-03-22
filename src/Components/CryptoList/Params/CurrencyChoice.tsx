@@ -7,7 +7,7 @@ interface CurrencyProps{
 
 export default function CurrencyChoice(props: CurrencyProps) {
     return(
-        <div className={styles.CurrencyChoiceContainer}>
+        <div className={styles.Select}>
             <label className={styles.CurrencyChoiceParagraph} >Выбор валюты</label>
             <select value={props.currency} onChange={props.currencyChange}>
                 <option value="rub">RUB</option>
