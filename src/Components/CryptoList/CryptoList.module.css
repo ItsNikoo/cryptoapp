@@ -1,4 +1,4 @@
-.container {
+.Container {
     margin: 0 6rem;
     padding: 1rem;
     border-radius: 8px;
@@ -117,6 +117,7 @@ tr:hover {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    margin-top: 20px;
 }
 
 .PaginationContainer{
