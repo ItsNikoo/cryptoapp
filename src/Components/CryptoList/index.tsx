@@ -31,7 +31,7 @@ export default function CryptoList() {
 
     useEffect(() => {
         localStorage.setItem("currency", currency);
-        localStorage.setItem("page", String(page));
+        localStorage.setItem("page", page.toString());
     }, [currency, page]);
 
     const {data, isError, isLoading, error} = useCryptoData(page, perPage, currency);
