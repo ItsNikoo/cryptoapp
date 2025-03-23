@@ -19,9 +19,9 @@ export default function CryptoList() {
         const perPage = localStorage.getItem("perPage");
         return perPage ? parseInt(perPage, 10) : 10;
     });
-    const [currency, setCurrency] = useState(() => {
+    const [currency, setCurrency] = useState<"rub" | "usd" | "eur">(() => {
         const savedCurrency = localStorage.getItem("currency");
-        return savedCurrency || 'usd';
+        return (savedCurrency as "rub" | "usd" | "eur") || "usd";
     });
     const [query, setQuery] = useState("")
     const [sortOrder, setSortOrder] = useState<"none" | "asc" | "desc">("none");
@@ -29,7 +29,7 @@ export default function CryptoList() {
 
     useEffect(() => {
         localStorage.setItem("currency", currency);
-        localStorage.setItem("page", page);
+        localStorage.setItem("page", String(page));
     }, [currency, page]);
 
     const {data, isError, isLoading, error} = useCryptoData(page, perPage, currency);
@@ -51,19 +51,19 @@ export default function CryptoList() {
         localStorage.setItem("page", newPage.toString()); // Сохраняем новую страницу
     }
 
-    const handlePerPageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handlePerPageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const newPerPage = parseInt(event.target.value);
         setPerPage(newPerPage);
         localStorage.setItem("perPage", newPerPage.toString());
         setPage(1)
     }
 
-    const currencyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setCurrency(event.target.value)
+    const currencyChange = (value: ("rub" | "usd" | "eur")) => {
+        setCurrency(value)
     }
 
     if (isLoading) return <p>Загрузка...</p>;
-    if (isError) return <p>Ошибка: {error.message}</p>;
+    if (isError) return <p>Ошибка: {error?.message}</p>;
     return (
         <div className={styles.container}>
             <div className={styles.HigherContainer}>
@@ -73,15 +73,15 @@ export default function CryptoList() {
                     }}/>
                 </div>
                 <div className={styles.ParamsContainer}>
-                    <SetOrderMarketCap state={sortOrderCap} setState={(e) => {
-                        setSortOrderCap(e.target.value)
+                    <SetOrderMarketCap state={sortOrderCap} setState={(value) => {
+                        setSortOrderCap(value)
                         setSortOrder('none')
-                    }} />
-                    <SetOrderCurrency state={sortOrder} setState={(e) => {
-                        setSortOrder(e.target.value)
+                    }}/>
+                    <SetOrderCurrency state={sortOrder} setState={(value) => {
+                        setSortOrder(value)
                         setSortOrderCap('none')
                     }}/>
-                    <CurrencyChoice currency={currency} currencyChange={currencyChange}/>
+                    <CurrencyChoice currency={currency} setState={currencyChange}/>
                 </div>
             </div>
 

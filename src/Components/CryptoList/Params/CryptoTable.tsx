@@ -3,8 +3,7 @@ import CryptoProps from "../props.ts";
 
 interface CryptoTableProps {
     data: CryptoProps[];
-    currency: string;
-}
+    currency: "usd" | "eur" | "rub";}
 
 const currencySymbols = {
     usd: "$",
