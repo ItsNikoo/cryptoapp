@@ -1,5 +1,5 @@
 import {useEffect, useState, useCallback} from "react";
-import {io, Socket} from "socket.io-client";
+import io from "socket.io-client";
 import defaultStyles from "../Default.module.css"
 import styles from "./WebSocketChat.module.css"
 
@@ -20,8 +20,7 @@ type ChatMessage = {
 };
 
 export default function WebSocketChat() {
-    const [socket, setSocket] = useState<Socket | null>(null);
-    const [messages, setMessages] = useState<ChatMessage[]>([]);
+    const [socket, setSocket] = useState<ReturnType<typeof io> | null>(null);    const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [input, setInput] = useState<string>("");
     const [username, setUsername] = useState<string>("");
 
