@@ -1,4 +1,6 @@
 import styles from './CryptoList.module.css'
+import defaultStyles from "../Default.module.css"
+
 import MyPaginator from "../MyPaginator";
 import CryptoTable from "./Params/CryptoTable.tsx";
 import CurrencyChoice from "./Params/CurrencyChoice.tsx";
@@ -65,7 +67,8 @@ export default function CryptoList() {
     if (isLoading) return <p>Загрузка...</p>;
     if (isError) return <p>Ошибка: {error?.message}</p>;
     return (
-        <div className={styles.container}>
+        <div className={styles.Container}>
+            <a className={defaultStyles.Button} href="/chat">Чат</a>
             <div className={styles.HigherContainer}>
                 <div className={styles.InputContainer}>
                     <input className={styles.Input} type="text" value={query} onChange={(e) => {
